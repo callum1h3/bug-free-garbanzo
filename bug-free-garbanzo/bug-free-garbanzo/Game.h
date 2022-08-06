@@ -1,6 +1,6 @@
 #pragma once
-
-#include "Renderer.h"
+#include "Engine.h"
+#include "VoxelManager.h"
 
 class Game
 {
@@ -12,4 +12,6 @@ public:
 	static void Render();
 	static void PreRender();
 	static void PostRender();
+
+	static bool cursor_enable;
 };

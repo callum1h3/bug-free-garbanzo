@@ -20,10 +20,25 @@
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{ed43ebdd-f459-4b10-be9c-ea4077fd07b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Renderer">
+    <Filter Include="Header Files\Voxel">
+      <UniqueIdentifier>{6285033b-f40f-4faf-9b11-349aa5759527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Voxel">
+      <UniqueIdentifier>{b44289ff-000d-490a-ac0b-a8743ebb15b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Libs">
+      <UniqueIdentifier>{8328d4b1-ba05-4b27-84a9-76454110654e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{5b3cb61d-44f6-4e62-9e94-0ce21967ea1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Renderer">
       <UniqueIdentifier>{af4cf47c-cceb-4e9d-922d-bd766df56443}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Renderer">
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{57007a21-8356-42b1-b10c-72deec702150}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Renderer">
       <UniqueIdentifier>{9c5f7b7c-7312-4eb6-9e2c-cf1b9a6a3590}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -62,13 +77,25 @@
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Source Files\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="SystemHelper.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="VoxelManager.cpp">
+      <Filter>Source Files\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffers.cpp">
+      <Filter>Source Files\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,13 +106,31 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Header Files\Renderer</Filter>
+      <Filter>Header Files\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="SystemHelper.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelManager.h">
+      <Filter>Header Files\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="SafeQueue.h">
+      <Filter>Header Files\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffers.h">
+      <Filter>Header Files\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

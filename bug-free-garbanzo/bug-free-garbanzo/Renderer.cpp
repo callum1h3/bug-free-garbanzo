@@ -1,16 +1,20 @@
 #include "Renderer.h"
-#include "Shader.h"
-
+#include "Input.h"
 #include <string>
 
 GLFWwindow* Renderer::GLFW_WINDOW_CONTEXT;
 ImGuiIO Renderer::IO;
+Camera Renderer::RENDERER_CAMERA;
 
 int Renderer::WINDOW_SIZE_WIDTH, Renderer::WINDOW_SIZE_HEIGHT;
 int Renderer::OPENGL_VERSION_MAJOR, Renderer::OPENGL_VERSION_MINOR;
 std::string Renderer::OPENGL_VERSION_STRING;
 
 bool Renderer::IS_INITIALIZED = false;
+
+
+std::map<unsigned int, Texture> Renderer::RENDERER_TEXTURES;
+unsigned int Renderer::RENDERER_TEXTURE_COUNT;
 
 bool Renderer::Initialize()
 {
@@ -28,10 +32,19 @@ bool Renderer::Initialize()
     if (!InitializeIMGUI())
         return false;
 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_CULL_FACE);
+
     ShaderManager::Initialize();
 
-    IS_INITIALIZED = true;
+    Camera* _camera = GetCamera();
+    _camera->Initialize();
+    _camera->OnResolutionChange(WINDOW_SIZE_WIDTH, WINDOW_SIZE_HEIGHT);
 
+    Input::Initialize(GLFW_WINDOW_CONTEXT);
+
+    IS_INITIALIZED = true;
     Debug::Log("Successfully Initialized Renderer!");
 
     return true;
@@ -56,10 +69,16 @@ bool Renderer::InitializeGLFW()
     }
 
     glfwMakeContextCurrent(GLFW_WINDOW_CONTEXT);
+    glfwSetFramebufferSizeCallback(GLFW_WINDOW_CONTEXT, frameBufferCallback);
 
     Debug::Log("Successfully Initialized GLFW!");
 
     return true;
+}
+
+void Renderer::frameBufferCallback(GLFWwindow* _window, int width, int height)
+{
+    glViewport(0, 0, width, height);
 }
 
 bool Renderer::InitializeGLAD()
@@ -98,7 +117,8 @@ void Renderer::PreRender()
 
 void Renderer::OnRender()
 {
-
+    Input::UpdateInput(WINDOW_SIZE_WIDTH, WINDOW_SIZE_HEIGHT);
+    RENDERER_CAMERA.Update();
 }
 
 void Renderer::PostRender()
@@ -127,9 +147,20 @@ void Renderer::SetWindowSize(int width, int height)
     if (IsInitialized())
     {
         glfwSetWindowSize(GLFW_WINDOW_CONTEXT, width, height);
+
+        Camera* _camera = GetCamera();
+        _camera->OnResolutionChange(width, height);
     }
+}
+
+Texture* Renderer::CreateTexture()
+{
+    return &RENDERER_TEXTURES[RENDERER_TEXTURE_COUNT];
+    RENDERER_TEXTURE_COUNT++;
 }
 
 bool Renderer::IsInitialized() { return IS_INITIALIZED; }
 bool Renderer::IsRunning() { return !glfwWindowShouldClose(GLFW_WINDOW_CONTEXT); }
 void Renderer::SetWindowName(const char* name) { glfwSetWindowTitle(GLFW_WINDOW_CONTEXT, name); }
+
+Camera* Renderer::GetCamera() { return &RENDERER_CAMERA; }

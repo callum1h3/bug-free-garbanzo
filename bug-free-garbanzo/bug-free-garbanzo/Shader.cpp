@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "Debug.h"
 #include "SystemHelper.h"
+#include "Renderer.h"
 
 #include <filesystem>
 #include <string>
@@ -127,6 +128,8 @@ void ShaderManager::CompileShaders()
         Shader* shader = &SHADERS[key];
         shader->Compile(SHADER_PATH);
         shader->hasInitialized = true;
+
+        Renderer::GetCamera()->BindViewBuffer(shader->shader_main_program);
     }
 }
 
