@@ -104,7 +104,12 @@
 				Chunk* chunk = GetChunk(outInfo.CHUNK_POSITION);
 
 				if (chunk->IS_VALID)
+				{
 					chunk->IS_INITIALIZED = true;
+
+					for (int i = 0; i < VOXEL_CHUNK_SUB_COUNT; i++)
+						chunk->UpdateBordering(i, false);
+				}
 
 				CHUNK_INIT_THREAD_OUT.pop_front();
 			}
@@ -116,7 +121,7 @@
 			{
 				if (CHUNK_MESH_THREAD_OUT.size() == 0)
 					break;
-
+				
 				ChunkThreadMeshInfo outInfo = CHUNK_MESH_THREAD_OUT[0];
 				Chunk* chunk = GetChunk(outInfo.CHUNK_POSITION);
 
@@ -172,10 +177,6 @@
 			fractal->SetGain(0.1f);
 			fractal->SetLacunarity(10.0f);
 
-			//float* data = new float[VOXEL_CHUNK_CUBED];
-			//float* data2 = new float[VOXEL_CHUNK_CUBED];
-			//fractal->GenPositionArray3D(data2, VOXEL_CHUNK_CUBED, data, data, data, 0, 0, 0, 1337);
-
 			int access = 0;
 			for (int by = 0; by < VOXEL_CHUNK_HEIGHT; by++)
 			{
@@ -197,7 +198,7 @@
 				}
 			}
 
-			chunk->CalculateVisability();
+			//chunk->CalculateVisability();
 			CHUNK_INIT_THREAD_OUT.push_back(info);
 		}
 
@@ -291,7 +292,7 @@
 				renderer->Attach(this);
 
 				for (int i = 0; i < VOXEL_CHUNK_SUB_COUNT; i++)
-					OnUpdate(i, true, true);
+					OnUpdate(i, false, false);
 
 				return;
 			}
@@ -301,6 +302,9 @@
 
 	void Chunk::OnUpdate(int sub_id, bool is_first = false, bool is_source = true)
 	{
+		if (is_source)
+			UpdateBordering(sub_id, true);
+
 		if (!IS_INITIALIZED)
 			return;
 
@@ -317,18 +321,18 @@
 		buffer->CURRENT_UPDATE_ID += 1;
 
 		VoxelManager::CHUNK_MESH_THREAD_IN.enqueue(info);
-
-		if (is_source)
-			UpdateBordering(sub_id);
 	}
 
-	void Chunk::UpdateBordering(int sub_id)
+	void Chunk::UpdateBordering(int sub_id, bool should_update_y = true)
 	{
-		if (sub_id != VOXEL_CHUNK_SUB_COUNT - 1)
-			OnUpdate(sub_id + 1, false, false);
+		if (should_update_y)
+		{
+			if (sub_id != VOXEL_CHUNK_SUB_COUNT - 1)
+				OnUpdate(sub_id + 1, false, false);
 
-		if (sub_id != 0)
-			OnUpdate(sub_id - 1, false, false);
+			if (sub_id != 0)
+				OnUpdate(sub_id - 1, false, false);
+		}
 
 		for (int i = 0; i < 4; i++)
 			BORDERING_CHUNKS[i]->OnUpdate(sub_id, false, false);
@@ -341,6 +345,7 @@
 
 		for (int y = 0; y < VOXEL_CHUNK_SIZE; y++)
 		{
+			int by = y + (VOXEL_CHUNK_SIZE * sub_id);
 			for (int x = 0; x < VOXEL_CHUNK_SIZE; x++)
 			{
 				for (int z = 0; z < VOXEL_CHUNK_SIZE; z++, access++)
@@ -350,9 +355,12 @@
 					if (voxel->ID == 0)
 						continue;
 
+					unsigned char visability = chunk->CalculateBlockVisability(voxel, access, x, by, z);
+
 					for (int p = 0; p < 6; p++)
 					{
-						if (((voxel->DATA >> p) & 1) == 1)
+						
+						if (((visability >> p) & 1) == 1)
 						{
 							for (int i = 0; i < 6; i++)
 							{
@@ -406,33 +414,26 @@
 		return false;
 	}
 
-	void Chunk::CalculateBlockFaceVisabilityY(Voxel* voxel, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int inside_chunk_direction)
+	bool Chunk::CalculateBlockFaceVisabilityY(Voxel* voxel, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int inside_chunk_direction)
 	{
-		if (dir_coord == edge_number)
-		{
-			voxel->DATA |= 1 << visability_index_source;
-			return;
-		}
-		else
+		if (dir_coord != edge_number)
 		{
 			Voxel* connecting_voxel = GetVoxel(access + inside_chunk_direction);
 
-			bool can_render_1 = CanFaceRenderAgainst(voxel, connecting_voxel);
-			bool can_render_2 = CanFaceRenderAgainst(connecting_voxel, voxel);
-
-			voxel->DATA |= int(can_render_1) << visability_index_source;
-			connecting_voxel->DATA |= int(can_render_2) << visability_index_connect;
+			return CanFaceRenderAgainst(voxel, connecting_voxel);
 		}
+
+		return true;
 	}
 
-	void Chunk::CalculateBlockFaceVisability(Voxel* voxel, Chunk* bordering_chunk, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int outside_chunk_diretion, int inside_chunk_direction)
+	bool Chunk::CalculateBlockFaceVisability(Voxel* voxel, Chunk* bordering_chunk, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int outside_chunk_diretion, int inside_chunk_direction)
 	{
 		Voxel* connecting_voxel = nullptr;
 		bool has_voxel = false;
 
 		if (dir_coord == edge_number)
 		{
-			if (bordering_chunk->IS_VALID && bordering_chunk->IS_INITIALIZED)
+			if ((bordering_chunk->IS_VALID && bordering_chunk->IS_INITIALIZED))
 			{
 				connecting_voxel = bordering_chunk->GetVoxel(access + outside_chunk_diretion);
 				has_voxel = true;
@@ -445,32 +446,29 @@
 		}
 
 		if (has_voxel)
-		{
-			bool can_render_1 = CanFaceRenderAgainst(voxel, connecting_voxel);
-			bool can_render_2 = CanFaceRenderAgainst(connecting_voxel, voxel);
-
-
-			voxel->DATA |= int(can_render_1) << visability_index_source;
-			connecting_voxel->DATA |= int(can_render_2) << visability_index_connect;
-		}
+			return CanFaceRenderAgainst(voxel, connecting_voxel);
+		return false;
 	}
 
-	void Chunk::CalculateBlockVisability(Voxel* voxel, int access, int x, int y, int z)
+	unsigned char Chunk::CalculateBlockVisability(Voxel* voxel, int access, int x, int y, int z)
 	{
+		unsigned char visability = 0;
 		// Back
-		CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[0], 0, 1, access, z, 0, VOXEL_SIZE_MINUS_ONE, -1);
+		visability |= CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[0], 0, 1, access, z, 0, VOXEL_SIZE_MINUS_ONE, -1) << 0;
 		// Front
-		CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[1], 1, 0, access, z, VOXEL_SIZE_MINUS_ONE, -VOXEL_SIZE_MINUS_ONE, 1);
+		visability |= CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[1], 1, 0, access, z, VOXEL_SIZE_MINUS_ONE, -VOXEL_SIZE_MINUS_ONE, 1) << 1;
 
 		// Up
-		CalculateBlockFaceVisabilityY(voxel, 2, 3, access, y, VOXEL_CHUNK_HEIGHT - 1, VOXEL_CHUNK_SQUARED);
+		visability |= CalculateBlockFaceVisabilityY(voxel, 2, 3, access, y, VOXEL_CHUNK_HEIGHT - 1, VOXEL_CHUNK_SQUARED) << 2;
 		// Down
-		CalculateBlockFaceVisabilityY(voxel, 3, 2, access, y, 0, -VOXEL_CHUNK_SQUARED);
+		visability |= CalculateBlockFaceVisabilityY(voxel, 3, 2, access, y, 0, -VOXEL_CHUNK_SQUARED) << 3;
 
 		// Left
-		CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[2], 4, 5, access, x, 0, VOXEL_SQUARED_WERID_CALCULATION, -VOXEL_CHUNK_SIZE);
+		visability |= CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[2], 4, 5, access, x, 0, VOXEL_SQUARED_WERID_CALCULATION, -VOXEL_CHUNK_SIZE) << 4;
 		// Right
-		CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[3], 5, 4, access, x, VOXEL_SIZE_MINUS_ONE, -VOXEL_SQUARED_WERID_CALCULATION, VOXEL_CHUNK_SIZE);
+		visability |= CalculateBlockFaceVisability(voxel, BORDERING_CHUNKS[3], 5, 4, access, x, VOXEL_SIZE_MINUS_ONE, -VOXEL_SQUARED_WERID_CALCULATION, VOXEL_CHUNK_SIZE) << 5;
+
+		return visability;
 	}
 
 	// RENDERER CLASS

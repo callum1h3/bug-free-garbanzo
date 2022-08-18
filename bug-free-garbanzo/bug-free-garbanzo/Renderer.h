@@ -41,6 +41,7 @@ public:
 	static Texture* CreateTexture();
 
 	static Camera* GetCamera();
+	static GLFWwindow* GetWindow();
 private:
 	static GLFWwindow* GLFW_WINDOW_CONTEXT;
 	static ImGuiIO IO;

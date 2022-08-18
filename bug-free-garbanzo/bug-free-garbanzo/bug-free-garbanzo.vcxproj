@@ -179,6 +179,10 @@
     <ClInclude Include="SystemHelper.h" />
     <ClInclude Include="VoxelManager.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Editor\shaders\chunkshader_f.glsl" />
+    <None Include="..\x64\Editor\shaders\chunkshader_v.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

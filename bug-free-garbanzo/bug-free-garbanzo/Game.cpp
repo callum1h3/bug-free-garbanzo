@@ -28,6 +28,8 @@ void Game::Start()
 	Renderer::SetWindowName("EPIC ENGINE");
 
 	VoxelManager::Initialize();
+
+	Debug::Initialize(Renderer::GetWindow());
 }
 
 void Game::Render()
@@ -61,10 +63,13 @@ void Game::Render()
 	direction += camera->Right() *= Input::GetHorizontal();
 
 	camera->SetPosition(camera->GetPosition() + (direction *= 0.2f));
+
+	Debug::Render();
 }
 
 void Game::PreRender()
 {
+	Debug::PreRender();
 	Renderer::PreRender();
 }
 
@@ -77,4 +82,5 @@ void Game::Dispose()
 {
 	VoxelManager::Dispose();
 	Renderer::Dispose();
+	Debug::Dispose();
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "VoxelManager.h"
+#include "Debug.h"
 
 class Game
 {

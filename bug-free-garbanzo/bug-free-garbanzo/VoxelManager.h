@@ -9,7 +9,7 @@
 
 
 	static const int VOXEL_CHUNK_SIZE = 32;
-	static const int VOXEL_CHUNK_HEIGHT = 256;
+	static const int VOXEL_CHUNK_HEIGHT = 512;
 	static const int VOXEL_CHUNK_SUB_COUNT = VOXEL_CHUNK_HEIGHT / VOXEL_CHUNK_SIZE;
 	static const int VOXEL_CHUNK_SUB_CUBED = VOXEL_CHUNK_SIZE * VOXEL_CHUNK_SIZE * VOXEL_CHUNK_SIZE;
 	static const int VOXEL_CHUNK_SQUARED = VOXEL_CHUNK_SIZE * VOXEL_CHUNK_SIZE;
@@ -38,15 +38,15 @@
 		{1, 2, 5, 5, 2, 6}
 	};
 
-	static const glm::ivec3 neighbourChunks[6] = {
+	static const glm::ivec2 neighbourChunks[4] = {
 		// Back
-		glm::ivec3(0,  0, -1),
+		glm::ivec2(0, -1),
 		// Front
-		glm::ivec3(0,  0,  1),
+		glm::ivec2(0,  1),
 		// Left
-		glm::ivec3(-1, 0,  0),
+		glm::ivec2(-1, 0),
 		// Right
-		glm::ivec3(1,  0,  0)
+		glm::ivec2(1,  0)
 	};
 
 	struct Voxel;
@@ -136,7 +136,7 @@
 
 		void Create(glm::ivec2 chunk_pos);
 		void OnUpdate(int sub_id, bool is_first, bool is_source);
-		void UpdateBordering(int sub_id);
+		void UpdateBordering(int sub_id, bool should_update_y);
 		void FindRenderer();
 		Voxel* GetVoxel(int access);
 
@@ -144,9 +144,9 @@
 		static std::vector<VoxelVertexInfo> CalculateChunkMesh(Chunk* chunk, int sub_id);
 	private:
 
-		void CalculateBlockFaceVisabilityY(Voxel* voxel, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int inside_chunk_direction);
-		void CalculateBlockFaceVisability(Voxel* voxel, Chunk* bordering_chunk, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int outside_chunk_diretion, int inside_chunk_direction);
-		void CalculateBlockVisability(Voxel* voxel, int access, int x, int y, int z);
+		bool CalculateBlockFaceVisabilityY(Voxel* voxel, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int inside_chunk_direction);
+		bool CalculateBlockFaceVisability(Voxel* voxel, Chunk* bordering_chunk, int visability_index_source, int visability_index_connect, int access, int dir_coord, int edge_number, int outside_chunk_diretion, int inside_chunk_direction);
+		unsigned char CalculateBlockVisability(Voxel* voxel, int access, int x, int y, int z);
 		bool CanFaceRenderAgainst(Voxel* source_voxel, Voxel* voxel);
 	};
 

@@ -41,6 +41,9 @@
     <Filter Include="Header Files\Engine\Renderer">
       <UniqueIdentifier>{9c5f7b7c-7312-4eb6-9e2c-cf1b9a6a3590}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\shaders">
+      <UniqueIdentifier>{00d6eedb-959e-4703-ab76-95ae4496b324}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bug-free-garbanzo.cpp">
@@ -82,9 +85,6 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="SystemHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Engine\Renderer</Filter>
     </ClCompile>
@@ -95,6 +95,9 @@
       <Filter>Source Files\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemHelper.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Engine\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemHelper.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Renderer</Filter>
@@ -132,5 +132,16 @@
     <ClInclude Include="Engine.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="SystemHelper.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Editor\shaders\chunkshader_f.glsl">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\x64\Editor\shaders\chunkshader_v.glsl">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

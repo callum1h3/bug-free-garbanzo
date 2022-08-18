@@ -29,9 +29,6 @@ bool Renderer::Initialize()
     if (!InitializeGLAD())
         return false;
 
-    if (!InitializeIMGUI())
-        return false;
-
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glEnable(GL_CULL_FACE);
@@ -164,3 +161,4 @@ bool Renderer::IsRunning() { return !glfwWindowShouldClose(GLFW_WINDOW_CONTEXT);
 void Renderer::SetWindowName(const char* name) { glfwSetWindowTitle(GLFW_WINDOW_CONTEXT, name); }
 
 Camera* Renderer::GetCamera() { return &RENDERER_CAMERA; }
+GLFWwindow* Renderer::GetWindow() { return GLFW_WINDOW_CONTEXT; }
