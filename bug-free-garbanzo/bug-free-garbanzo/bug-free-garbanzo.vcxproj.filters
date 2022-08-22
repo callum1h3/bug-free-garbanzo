@@ -100,6 +100,12 @@
     <ClCompile Include="SystemHelper.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Chunk.cpp">
+      <Filter>Source Files\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="ChunkRenderer.cpp">
+      <Filter>Source Files\Voxel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -134,6 +140,15 @@
     </ClInclude>
     <ClInclude Include="SystemHelper.h">
       <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="VoxelHelper.h">
+      <Filter>Header Files\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunk.h">
+      <Filter>Header Files\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="ChunkRenderer.h">
+      <Filter>Header Files\Voxel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
