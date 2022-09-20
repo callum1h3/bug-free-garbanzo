@@ -14,9 +14,7 @@ void Game::Run()
 
 	while (Renderer::IsRunning())
 	{
-		PreRender();
 		Render();
-		PostRender();
 	}
 
 	Dispose();
@@ -34,8 +32,8 @@ void Game::Start()
 
 void Game::Render()
 {
+	Renderer::Update();
 	VoxelManager::Update();
-	Renderer::OnRender();
 
 	if (Input::GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -56,7 +54,7 @@ void Game::Render()
 		Input::GetMouseFPSStyle(&mouse_x, &mouse_y);
 		camera->AddAngles(mouse_x * 0.01, -mouse_y * 0.01);
 	}
-
+		
 
 	glm::vec3 direction = glm::vec3(0, 0, 0);
 	direction += camera->Forward() *= Input::GetVertical();
@@ -64,7 +62,20 @@ void Game::Render()
 
 	camera->SetPosition(camera->GetPosition() + (direction *= 0.2f));
 
+	
+	Renderer::PreRender();
+
+	
+
+	
+
+	Renderer::PreRenderDef();
+	VoxelManager::Render();
+	Renderer::PostRenderDef();
+
+	Debug::PreRender();
 	Debug::Render();
+	Renderer::PostRender();
 }
 
 void Game::PreRender()

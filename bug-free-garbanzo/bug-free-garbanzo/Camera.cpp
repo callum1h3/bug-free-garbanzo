@@ -114,7 +114,6 @@
         glDeleteBuffers(1, &uniformBufferID);
     }
 
-
     void Camera::UpdateFrustumFromCamera(float aspect, float fovY, float zNear, float zFar)
     {
         const float halfVSide = zFar * tanf(fovY * .5f);

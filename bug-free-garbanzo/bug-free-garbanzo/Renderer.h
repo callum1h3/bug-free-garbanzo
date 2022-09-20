@@ -24,8 +24,11 @@ public:
 	static bool InitializeGLAD();
 	static bool InitializeIMGUI();
 
+	static void Update();
 	static void PreRender();
-	static void OnRender();
+	static void PreRenderDef();
+	
+	static void PostRenderDef();
 	static void PostRender();
 	static void Dispose();
 
@@ -47,6 +50,7 @@ private:
 	static ImGuiIO IO;
 	static bool IS_INITIALIZED;
 
+	static unsigned int gBuffer, gPosition, gNormal, gColorSpec, gAlbedoSpec, rboDepth;
 	static int OPENGL_VERSION_MAJOR, OPENGL_VERSION_MINOR;
 	static std::string OPENGL_VERSION_STRING;
 
@@ -54,4 +58,9 @@ private:
 	static Camera RENDERER_CAMERA;
 
 	static void frameBufferCallback(GLFWwindow* _window, int width, int height);
+	static void InitializeGBuffer();
+	static void UpdateGBuffer();
+
+	static unsigned int quadVAO, quadVBO;
+	static void RenderQuad();
 };

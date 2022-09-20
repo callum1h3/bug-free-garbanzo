@@ -32,7 +32,6 @@ int VoxelManager::CHUNK_RENDERERS_COUNT = 0;
 
 ChunkRenderer* VoxelManager::CHUNK_RENDERERS;
 
-
 void VoxelManager::Initialize()
 {
 	RENDERER_CAMERA = Renderer::GetCamera();
@@ -58,7 +57,10 @@ void VoxelManager::Update()
 {
 	LoopThreads();
 	ChunkUpdateLoop();
+}
 
+void VoxelManager::Render()
+{
 	RendererLoop();
 }
 
@@ -85,7 +87,6 @@ void VoxelManager::SetTexturePack(std::string name)
 	unsigned char* a = texture_byte[0];
 
 	CHUNK_TEXTURE->SetTextureArray(a, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE);
-
 }
 
 
@@ -184,6 +185,8 @@ void VoxelManager::ChunkInitThread()
 
 
 
+
+
 		int access = 0;
 		for (int by = 0; by < VOXEL_CHUNK_HEIGHT; by++)
 		{
@@ -224,7 +227,7 @@ void VoxelManager::ChunkMeshThread()
 
 		Chunk* chunk = GetChunk(info.CHUNK_POSITION);
 		if (!chunk->IS_INITIALIZED)
-			return;
+			return;	
 
 		std::vector<VoxelVertexInfo> vertices = chunk->CalculateChunkMesh(chunk, info.SUB_ID);
 		info.VERTICES = vertices;

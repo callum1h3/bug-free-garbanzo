@@ -158,5 +158,11 @@
     <None Include="..\x64\Editor\shaders\chunkshader_v.glsl">
       <Filter>Resource Files\shaders</Filter>
     </None>
+    <None Include="..\x64\Editor\shaders\deferredshading_f.glsl">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="..\x64\Editor\shaders\deferredshading_v.glsl">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

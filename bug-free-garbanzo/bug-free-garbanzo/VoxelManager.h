@@ -40,6 +40,7 @@
 
 		static void Initialize();
 		static void Update();
+		static void Render();
 		static void Dispose();
 
 		static void SetTexturePack(std::string name);
